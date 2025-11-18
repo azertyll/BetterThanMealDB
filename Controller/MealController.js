@@ -17,7 +17,16 @@ class MealController {
 
     async getMeals(req, res){
         try{
-            const meals = await executeQuery(`SELECT * FROM meal`)
+            const { limit } = req.query
+            let query = "SELECT * FROM meal"
+            const values = [];
+
+            if (!isNaN(limit) && limit > 0) {
+                query += " LIMIT ?";
+                values.push(limit);
+            }
+
+            const meals = await executeQuery(query, values);
 
             res.status(200).json({message: "Les plats ont été récupérés avec succès!", data: meals})
         }catch(error){
